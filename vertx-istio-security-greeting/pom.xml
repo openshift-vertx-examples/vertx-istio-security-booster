@@ -21,17 +21,19 @@
 
   <parent>
     <groupId>io.openshift.booster</groupId>
-    <artifactId>vertx-istio-tls-parent</artifactId>
+    <artifactId>vertx-istio-security-parent</artifactId>
     <version>1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>vertx-istio-tls-name</artifactId>
+  <artifactId>vertx-istio-security-greeting</artifactId>
 
-  <name>Eclipse Vert.x Mutual TLS :: Name Service</name>
+  <name>Eclipse Vert.x Istio Security :: Greeting Service</name>
 
   <properties>
     <skip.fmp>false</skip.fmp>
-    <vertx.verticle>io.openshift.booster.NameServiceVerticle</vertx.verticle>
+
+    <vertx.verticle>io.openshift.booster.GreetingServiceVerticle</vertx.verticle>
+    <!--<vertx.health>/health</vertx.health>-->
   </properties>
 
   <dependencies>
@@ -46,6 +48,10 @@
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-client</artifactId>
     </dependency>
   </dependencies>
 

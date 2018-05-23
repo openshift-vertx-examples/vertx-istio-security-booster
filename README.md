@@ -1,71 +1,125 @@
-_Eclipse Vert.x Booster illustrating the usage of TLS communication managed by Istio._
+# Eclipse Vert.x / Istio Security Booster
 
-# Install Istio
+## Purpose
+Showcase Istio TLS and ACL via a set of Eclipse Vert.x applications.
 
-Create Istio service accounts
-```
-oc adm policy add-scc-to-user anyuid -z istio-ingress-service-account -n istio-system
-oc adm policy add-scc-to-user anyuid -z istio-grafana-service-account -n istio-system
-oc adm policy add-scc-to-user anyuid -z istio-prometheus-service-account -n istio-system
-```
+## Prerequisites
 
-Download Istio
-```
-curl -L https://git.io/getLatestIstio | ISTIO_VERSION=0.5.0 sh -
-```
+* Openshift 3.9 cluster
+* Istio 0.7.1 with authentication installed on the aforementioned cluster. To install Istio simply follow one of the 
+following docs:
+    * https://istio.io/docs/setup/kubernetes/quick-start.html
+    * https://istio.io/docs/setup/kubernetes/ansible-install.html
+* Enable automatic sidecar injection for Istio (See https://istio.io/docs/setup/kubernetes/sidecar-injection.html 
+for details). In order for Istio automatic sidecar injection to work properly, the following Istio configuration needs to 
+be in place:
+    * The `policy` field is set to `disabled` in the `istio-inject` configmap  of the `istio-system` namespace.
+   This can be checked by inspecting the output of
+   ```bash
+   oc get configmap istio-inject -o jsonpath='{.data.config}' -n istio-system | grep policy
+   ```   
+    * The `istio-sidecar-injector` `MutatingWebhookConfiguration` should not limit the injection to properly labeled 
+    namespaces. If Istio was installed using the default settings, then make sure the output of
+   ```bash 
+   oc get MutatingWebhookConfiguration istio-sidecar-injector -o jsonpath='{.webhooks[0].namespaceSelector}' -n istio-system
+   ```
+    is empty. It is advised however that you inspect the output of
+   ```bash
+   oc get MutatingWebhookConfiguration istio-sidecar-injector -o yaml
+   ```
+    to make sure that no other "filters" have been applied.
 
-Install Istio
-```
-cd istio-0.5.0
-export PATH=$PWD/bin:$PATH
-oc login -u system:admin
-kubectl apply -f install/kubernetes/istio-auth.yaml
-```
-
-Create Ingress route
+* Expose services and Istio ingress:
 ```
 oc expose svc istio-ingress -n istio-system
-oc get route/istio-ingress -n istio-system
 ```
 
-# Prepare the Namespace
+* Login to the cluster with the admin user
 
-**This mission assumes that `myproject` namespace is used.**
+## Environment preparation
 
-Create the namespace if one does not exist
-```
-oc new-project myproject
-```
+Create a new project/namespace on the cluster. This is where your application will be deployed.
 
-Give required permissions to the service accounts used by the booster
-```
-oc adm policy add-scc-to-user privileged -n myproject -z default
-oc adm policy add-scc-to-user privileged -n myproject -z sa-greeting
+```bash
+oc new-project <whatever valid project name you want>
 ```
 
-# Deploy the Application
+## Build and deploy the application
 
-```
-mvn clean package fabric8:build -Popenshift
-oc apply -f <(istioctl kube-inject -f kubernetes/application.yaml)
-```
+### With Fabric8 Maven Plugin (FMP)
 
-# Use the Application
-
-Get ingress route (further referred as ${INGRESS_ROUTE})
-```
-oc get route -n istio-system
+Execute the following command to build the project and deploy it to OpenShift:
+```bash
+mvn clean fabric8:deploy -Popenshift
 ```
 
-Copy and paste HOST/PORT value returned by the previous command to your browser.
+Configuration for FMP may be found both in pom.xml and `src/main/fabric8` files/folders.
 
-To only allow the greeting service access to the name service, run:
+This configuration is used to define service names and deployments that control how pods are labeled/versioned on the OpenShift cluster.
 
-```
-istioctl create -f kubernetes/istio-rule-require-service-account.yaml -n myproject
+
+## Use Cases
+
+### Scenario #1. Mutual TLS
+
+This scenario demonstrates a mutual transport level security between the services.
+
+1. Open the booster’s web page via Istio ingress route
+    ```bash
+    echo http://$(oc get route istio-ingress -o jsonpath='{.spec.host}{"\n"}' -n istio-system)/
+    ```
+2. "Hello, World!" should be returned after invoking `greeting` service.
+3. Now modify greeting deployment to disable sidecar injection by replacing all `sidecar.istio.io/inject` values to `false`
+    ```bash
+    oc edit deploymentconfigs/vertx-istio-security-greeting
+    ```
+4. Open the booster’s web page via `greeting` service’s route
+    ```bash
+    echo http://$(oc get route vertx-istio-security-greeting -o jsonpath='{.spec.host}{"\n"}' -n $(oc project -q))/
+    ```
+5. `Greeting` service invocation will fail with a reset connection, because the `greeting` service has to be inside a 
+service mesh in order to access the `name` service.
+6. Cleanup by setting `sidecar.istio.io/inject` values to true
+    ```bash
+    oc edit deploymentconfigs/vertx-istio-security-greeting
+    ```
+
+### Scenario #2. Access control
+
+This scenario demonstrates access control when using mutual TLS. In order to access a name service, calling service has to have a specific label and service account name.
+
+1. Open the booster’s web page via Istio ingress route
+    ```bash
+    echo http://$(oc get route istio-ingress -o jsonpath='{.spec.host}{"\n"}' -n istio-system)/
+    ```
+2. "Hello, World!" should be returned after invoking `greeting` service.
+3. Configure Istio Mixer to block `greeting` service from accessing `name` service
+    ```bash
+    oc apply -f rules/block-greeting-service.yml
+    ```
+4. `Greeting` service invocations to the `name` service will be forbidden.
+5. Configure Istio Mixer to only allow requests from `greeting` service and with `sa-greeting` service account to access 
+`name` service
+    ```bash
+    oc apply -f <(sed -e "s/TARGET_NAMESPACE/$(oc project -q)/g" rules/require-service-account-and-label.yml)
+    ```
+6. "Hello, World!" should be returned after invoking `greeting` service.
+7. Cleanup
+    ```bash
+    oc delete -f rules/require-service-account-and-label.yml
+    ```
+
+## Undeploy the application
+
+### With Fabric8 Maven Plugin (FMP)
+
+```bash
+mvn fabric8:undeploy
 ```
 
-To allow everyone to access the name service:
-```
-istioctl delete -f kubernetes/istio-rule-require-service-account.yaml -n myproject
+### Remove the namespace
+This will delete the project from the OpenShift cluster
+
+```bash
+oc delete project <your project name>
 ```

@@ -1,0 +1,86 @@
+<!--
+  ~
+  ~  Copyright 2016-2017 Red Hat, Inc, and individual contributors.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~  http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  ~
+  -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Istio Security Mission - Eclipse Vert.x</title>
+  <link rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+        crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+  <div>
+    <h1>Istio Security Mission - Eclipse Vert.x</h1>
+    <p class="lead">
+      This mission showcases Istio security concepts whereby access to services is controlled by the platform
+      rather than independently by constituent applications.
+    </p>
+    <p>
+      Here we'll outline how to apply a security policy that allows clients to obtain a greeting from a Greeting
+      Service while forbidding direct access to the underlying name service. Further, we'll explore how to change
+      this policy on the fly to permit invocations directly upon the internal service.
+    </p>
+    <hr/>
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Greeting service</h2>
+        <button id="greeting-invoke" type="submit" class="btn btn-primary">Invoke</button>
+        <h3>Results:</h3>
+        <pre><code id="greeting-result">Invoke the service to see the result.</code></pre>
+      </div>
+      <div class="col-md-6">
+        <h3>Instructions</h3>
+        <p>
+          Please reference the mission documentation or <a
+          href="https://github.com/openshiftio-vertx-boosters/vertx-istio-security-booster/blob/master/README.md">README
+        </a> for next steps and instructions to run each scenario.
+        </p>
+        <ul>
+          <li>Scenario #1. Mutual TLS</li>
+          <li>Scenario #2. Access control</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+<script>
+  function get(url, container) {
+    $.get(url)
+      .done(function(res) {
+        $(container).text(res);
+      })
+      .fail(function(jqxhr) {
+        $(container).text(jqxhr.responseText);
+      });
+  }
+  $(document).ready(function() {
+    $("#greeting-invoke").click(function(e) {
+      get("/api/greeting", "#greeting-result");
+      e.preventDefault();
+    });
+  });
+</script>
+</body>
+</html>

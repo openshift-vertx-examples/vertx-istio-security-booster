@@ -18,8 +18,7 @@ kind: rule
 metadata:
   name: denynameserviceaccess
 spec:
-  match: destination.labels["app"] == "vertx-istio-tls-name" && source.user != "cluster.local/ns/myproject/sa/sa-greeting"
-#  match: destination.labels["app"] == "vertx-istio-tls-name"
+  match: destination.labels["app"] == "vertx-istio-security-name" && source.labels["app"] == "vertx-istio-security-greeting"
   actions:
   - handler: denynameservicehandler.denier
     instances: [ denynameservicerequest.checknothing ]
