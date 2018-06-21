@@ -46,7 +46,7 @@ This scenario demonstrates a mutual transport level security between the service
     ```bash
     oc edit deploymentconfigs/vertx-istio-security-greeting
     ```
-4. Open the booster’s web page via `greeting` service’s route
+4. Open the booster’s web page via `greeting` service’s route 
     ```bash
     echo http://$(oc get route vertx-istio-security-greeting -o jsonpath='{.spec.host}{"\n"}' -n $(oc project -q))/
     ```
@@ -68,18 +68,18 @@ This scenario demonstrates access control when using mutual TLS. In order to acc
 2. "Hello, World!" should be returned after invoking `greeting` service.
 3. Configure Istio Mixer to block `greeting` service from accessing `name` service
     ```bash
-    oc apply -f rules/block-greeting-service.yml
+    oc apply -f rules/block-greeting-service.yaml
     ```
 4. `Greeting` service invocations to the `name` service will be forbidden.
 5. Configure Istio Mixer to only allow requests from `greeting` service and with `sa-greeting` service account to access 
 `name` service
     ```bash
-    oc apply -f <(sed -e "s/TARGET_NAMESPACE/$(oc project -q)/g" rules/require-service-account-and-label.yml)
+    oc apply -f <(sed -e "s/TARGET_NAMESPACE/$(oc project -q)/g" rules/require-service-account-and-label.yaml)
     ```
 6. "Hello, World!" should be returned after invoking `greeting` service.
 7. Cleanup
     ```bash
-    oc delete -f rules/require-service-account-and-label.yml
+    oc delete -f rules/require-service-account-and-label.yaml
     ```
 
 ## Undeploy the application
