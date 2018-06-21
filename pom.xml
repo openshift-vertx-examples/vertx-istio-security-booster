@@ -32,7 +32,7 @@
 
   <properties>
     <skip.fmp>true</skip.fmp>
-    <vertx.version>3.5.1</vertx.version>
+    <vertx.version>3.5.2</vertx.version>
     <vertx-maven-plugin.version>1.0.13</vertx-maven-plugin.version>
   </properties>
 
@@ -76,20 +76,20 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>3.8.0</version>
+      <version>3.10.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
-      <version>3.0.5</version>
+      <version>3.1.0</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
-      <version>1.1.12.Final</version>
+      <version>1.4.0.Final</version>
       <scope>test</scope>
     </dependency>
 
@@ -114,7 +114,7 @@
     <dependency>
       <groupId>io.fabric8</groupId>
       <artifactId>openshift-client</artifactId>
-      <version>1.4.34</version>
+      <version>3.1.12</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
