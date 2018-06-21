@@ -33,7 +33,6 @@ public class NameServiceVerticle extends AbstractVerticle {
             .handler(rc -> rc.response().end(config().getString("name", "World")));
         router.get("/health").handler(rc -> rc.response().end("ok"));
 
-        
         vertx.createHttpServer()
             .requestHandler(router::accept)
             .rxListen(config().getInteger("http.port", 8080))

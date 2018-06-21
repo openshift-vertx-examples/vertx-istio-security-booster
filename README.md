@@ -6,34 +6,7 @@ Showcase Istio TLS and ACL via a set of Eclipse Vert.x applications.
 ## Prerequisites
 
 * Openshift 3.9 cluster
-* Istio 0.7.1 with authentication installed on the aforementioned cluster. To install Istio simply follow one of the 
-following docs:
-    * https://istio.io/docs/setup/kubernetes/quick-start.html
-    * https://istio.io/docs/setup/kubernetes/ansible-install.html
-* Enable automatic sidecar injection for Istio (See https://istio.io/docs/setup/kubernetes/sidecar-injection.html 
-for details). In order for Istio automatic sidecar injection to work properly, the following Istio configuration needs to 
-be in place:
-    * The `policy` field is set to `disabled` in the `istio-inject` configmap  of the `istio-system` namespace.
-   This can be checked by inspecting the output of
-   ```bash
-   oc get configmap istio-inject -o jsonpath='{.data.config}' -n istio-system | grep policy
-   ```   
-    * The `istio-sidecar-injector` `MutatingWebhookConfiguration` should not limit the injection to properly labeled 
-    namespaces. If Istio was installed using the default settings, then make sure the output of
-   ```bash 
-   oc get MutatingWebhookConfiguration istio-sidecar-injector -o jsonpath='{.webhooks[0].namespaceSelector}' -n istio-system
-   ```
-    is empty. It is advised however that you inspect the output of
-   ```bash
-   oc get MutatingWebhookConfiguration istio-sidecar-injector -o yaml
-   ```
-    to make sure that no other "filters" have been applied.
-
-* Expose services and Istio ingress:
-```
-oc expose svc istio-ingress -n istio-system
-```
-
+* Istio 0.7.1 with authentication installed on the aforementioned cluster. 
 * Login to the cluster with the admin user
 
 ## Environment preparation
