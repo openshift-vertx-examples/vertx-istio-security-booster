@@ -4,24 +4,22 @@
 Showcase Istio TLS and ACL via a set of Eclipse Vert.x applications.
 
 ## Prerequisites
-
 * Openshift 3.9 cluster
-* Istio 0.7.1 with authentication installed on the aforementioned cluster. 
-* Login to the cluster with the admin user
-
-## Environment preparation
-
-Create a new project/namespace on the cluster. This is where your application will be deployed.
+* Istio
+* Create a new project/namespace on the cluster. This is where your application will be deployed.
 
 ```bash
-oc new-project <whatever valid project name you want>
+oc login -u system:admin
+oc adm policy add-cluster-role-to-user admin developer --as=system:admin
+oc login -u developer -p developer
+oc new-project <whatever valid project name you want> # not required
 ```
 
 ## Build and deploy the application
 
 ### With Fabric8 Maven Plugin (FMP)
-
 Execute the following command to build the project and deploy it to OpenShift:
+
 ```bash
 mvn clean fabric8:deploy -Popenshift
 ```
