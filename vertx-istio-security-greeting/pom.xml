@@ -33,7 +33,7 @@
     <skip.fmp>false</skip.fmp>
 
     <vertx.verticle>io.openshift.booster.GreetingServiceVerticle</vertx.verticle>
-    <!--<vertx.health>/health</vertx.health>-->
+    <vertx.health.port>-1</vertx.health.port>
   </properties>
 
   <dependencies>
