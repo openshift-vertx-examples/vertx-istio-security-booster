@@ -28,6 +28,10 @@ public class GreetingServiceVerticle extends AbstractVerticle {
     );
 
     Router router = Router.router(vertx);
+    router.route().handler(rc -> {
+      System.out.println(rc.request().method() + " " + rc.request().path());
+      rc.next();
+    });
     router.get("/api/greeting").handler(this::invoke);
     router.get("/health").handler(rc -> rc.response().end("ok"));
     router.get("/*").handler(StaticHandler.create());

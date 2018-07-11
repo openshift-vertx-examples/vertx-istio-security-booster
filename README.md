@@ -28,8 +28,20 @@ Configuration for FMP may be found both in pom.xml and `src/main/fabric8` files/
 
 This configuration is used to define service names and deployments that control how pods are labeled/versioned on the OpenShift cluster.
 
+### With S2I Build
+
+find . | grep openshiftio | grep application | xargs -n 1 oc apply -f
+
+oc new-app --template=vertx-istio-security-name -p SOURCE_REPOSITORY_URL=https://github.com/openshiftio-vertx-boosters/vertx-istio-security-booster -p SOURCE_REPOSITORY_REF=master -p SOURCE_REPOSITORY_DIR=vertx-istio-security-name
+oc new-app --template=vertx-istio-security-greeting -p SOURCE_REPOSITORY_URL=https://github.com/openshiftio-vertx-boosters/vertx-istio-security-booster -p SOURCE_REPOSITORY_REF=master -p SOURCE_REPOSITORY_DIR=vertx-istio-security-greeting
 
 ## Use Cases
+
+Configure the ingress gateway with:
+
+```bash
+oc apply -f rules/gateway.yaml
+```
 
 ### Scenario #1. Mutual TLS
 
@@ -40,17 +52,14 @@ This scenario demonstrates a mutual transport level security between the service
     echo http://$(oc get route istio-ingress -o jsonpath='{.spec.host}{"\n"}' -n istio-system)/
     ```
 2. "Hello, World!" should be returned after invoking `greeting` service.
-3. Now modify greeting deployment to disable sidecar injection by replacing all `sidecar.istio.io/inject` values to `false`
+3. Now modify greeting deployment to disable sidecar injection by replacing the 2 occurrences of `sidecar.istio.io/inject` values to `false`
     ```bash
     oc edit deploymentconfigs/vertx-istio-security-greeting
     ```
-4. Open the booster’s web page via `greeting` service’s route 
-    ```bash
-    echo http://$(oc get route vertx-istio-security-greeting -o jsonpath='{.spec.host}{"\n"}' -n $(oc project -q))/
-    ```
-5. `Greeting` service invocation will fail with a reset connection, because the `greeting` service has to be inside a 
-service mesh in order to access the `name` service.
-6. Cleanup by setting `sidecar.istio.io/inject` values to true
+4. Got back to the booster page, and without reloading, try to invoke the service. The invocation failed. The `Greeting`
+ service invocation fails with a reset connection, because the `greeting` service has to be inside a service mesh in 
+ order to access the `name` service.
+5. Cleanup by setting `sidecar.istio.io/inject` values to true (the 2 occurrences)
     ```bash
     oc edit deploymentconfigs/vertx-istio-security-greeting
     ```
