@@ -8,6 +8,11 @@ Showcase Istio TLS and ACL via a set of Eclipse Vert.x applications.
 * Istio
 * Create a new project/namespace on the cluster. This is where your application will be deployed.
 
+If you use _istiooc_ launch it with:
+```bash
+oc cluster up --istio --istio-auth
+```
+
 ```bash
 oc login -u system:admin
 oc adm policy add-cluster-role-to-user admin developer --as=system:admin
@@ -49,13 +54,14 @@ This scenario demonstrates a mutual transport level security between the service
 
 1. Open the booster’s web page via Istio ingress route
     ```bash
-    echo http://$(oc get route istio-ingress -o jsonpath='{.spec.host}{"\n"}' -n istio-system)/
+    echo http://$(oc get route istio-ingressgateway -o jsonpath='{.spec.host}{"\n"}' -n istio-system)/
     ```
 2. "Hello, World!" should be returned after invoking `greeting` service.
 3. Now modify greeting deployment to disable sidecar injection by replacing the 2 occurrences of `sidecar.istio.io/inject` values to `false`
     ```bash
     oc edit deploymentconfigs/vertx-istio-security-greeting
     ```
+    The pod is going to restart. 
 4. Got back to the booster page, and without reloading, try to invoke the service. The invocation failed. The `Greeting`
  service invocation fails with a reset connection, because the `greeting` service has to be inside a service mesh in 
  order to access the `name` service.
@@ -63,6 +69,8 @@ This scenario demonstrates a mutual transport level security between the service
     ```bash
     oc edit deploymentconfigs/vertx-istio-security-greeting
     ```
+   The pod is going to restart. 
+
 
 ### Scenario #2. Access control
 

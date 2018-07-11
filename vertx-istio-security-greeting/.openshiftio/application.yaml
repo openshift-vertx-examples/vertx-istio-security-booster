@@ -56,7 +56,7 @@ objects:
     output:
       to:
         kind: ImageStreamTag
-        name: booster/vertx-istio-security-greeting:latest
+        name: vertx-istio-security-greeting:latest
     postCommit: {}
     resources: {}
     source:
@@ -159,7 +159,7 @@ objects:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          image: booster/vertx-istio-security-greeting:latest
+          image: vertx-istio-security-greeting:latest
           imagePullPolicy: IfNotPresent
           name: vertx
           ports:
@@ -177,6 +177,14 @@ objects:
         serviceAccountName: sa-greeting
     triggers:
     - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - vertx
+        from:
+          kind: ImageStreamTag
+          name: vertx-istio-security-greeting:latest
+      type: ImageChange
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
