@@ -12,7 +12,7 @@ Showcase Istio TLS and ACL via a set of Eclipse Vert.x applications.
 oc login -u system:admin
 oc adm policy add-cluster-role-to-user admin developer --as=system:admin
 oc login -u developer -p developer
-oc new-project <whatever valid project name you want> # not required
+oc new-project <whatever valid project name you want> # not required, keep a trace of this name.
 ```
 
 ## Build and deploy the application
