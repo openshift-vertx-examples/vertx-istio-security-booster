@@ -10,7 +10,6 @@ target
 .project
 bin
 tmp
-istio-0.5.0
 
 pom.xml.tag
 pom.xml.releaseBackup
@@ -24,3 +23,6 @@ buildNumber.properties
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 .vertx/
+
+# OpenShift
+openshift.local.clusterup*
