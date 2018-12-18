@@ -11,8 +11,8 @@ Showcase Istio TLS and ACL via a set of Eclipse Vert.x applications.
 # Set oc to be the Maistra one
 oc cluster up --enable="*,istio"
 oc login -u system:admin
-# Apply a configuration that enables jaeger
-oc apply -f oc apply -f https://gist.githubusercontent.com/cescoffier/6502ae00bcb1487bef4325837d2e2b80/raw/d92d78565478e20b6cf86d15d2aa46b2c49b5d9e/istio-installation-distributed-tracing.yaml -n istio-operator -n istio-operator
+# Apply a configuration that enables auth
+oc apply -f istio-install.yaml -n istio-operator
 oc get pods -n istio-system -w
 ```
 Wait until the `openshift-ansible-istio-installer-job-xxxx` job has completed. It can take several minutes. The OpenShift console is available on https://127.0.0.1:8443.
@@ -22,8 +22,8 @@ Wait until the `openshift-ansible-istio-installer-job-xxxx` job has completed. I
 ```bash
 oc login -u system:admin
 oc adm policy add-cluster-role-to-user admin developer --as=system:admin
+oc adm policy add-scc-to-user privileged -z default -n $(oc project -q)
 oc login -u developer -p developer
-oc new-project <whatever valid project name you want> # not required
 ```
 
 ## Build and deploy the application

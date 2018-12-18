@@ -159,6 +159,8 @@ objects:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
+          - name: JAVA_OPTIONS
+            value: '-Dvertx.cacheDirBase=/tmp -Dvertx.disableDnsResolver=true'
           image: vertx-istio-security-greeting:latest
           imagePullPolicy: IfNotPresent
           name: vertx
