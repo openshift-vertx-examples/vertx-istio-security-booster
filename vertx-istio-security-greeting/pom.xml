@@ -22,7 +22,7 @@
   <parent>
     <groupId>io.openshift.booster</groupId>
     <artifactId>vertx-istio-security-parent</artifactId>
-    <version>3</version>
+    <version>4-SNAPSHOT</version>
   </parent>
 
   <artifactId>vertx-istio-security-greeting</artifactId>
