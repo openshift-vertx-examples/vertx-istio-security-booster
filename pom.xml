@@ -26,7 +26,7 @@
 
   <properties>
     <skip.fmp>true</skip.fmp>
-    <vertx.version>3.6.2</vertx.version>
+    <vertx.version>3.9.4</vertx.version>
     <vertx-maven-plugin.version>1.0.18</vertx-maven-plugin.version>
 
     <maven.compiler.source>1.8</maven.compiler.source>
